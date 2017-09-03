@@ -16,14 +16,14 @@ type NetworksController struct {
 
 // Index func return all networks
 func (c *NetworksController) Index(w http.ResponseWriter, r *http.Request) {
-	containerList, err := docker.DockerConn.NetworkList(context.Background(), types.NetworkListOptions{})
+	networkList, err := docker.DockerConn.NetworkList(context.Background(), types.NetworkListOptions{})
 	if c.CheckError(err, http.StatusInternalServerError, w) {
 		return
 	}
 	c.SendJSON(
 		w,
 		r,
-		containerList,
+		networkList,
 		http.StatusOK,
 	)
 }

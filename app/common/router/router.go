@@ -9,8 +9,10 @@ import (
 
 	// Resources
 	"github.com/krishamoud/docker-stats/app/bundles/containers"
+	"github.com/krishamoud/docker-stats/app/bundles/images"
 	"github.com/krishamoud/docker-stats/app/bundles/logs"
 	"github.com/krishamoud/docker-stats/app/bundles/networks"
+	"github.com/krishamoud/docker-stats/app/bundles/volumes"
 
 	// common middleware
 	"github.com/krishamoud/docker-stats/app/common/middleware"
@@ -27,6 +29,8 @@ func Router() *mux.Router {
 	cc := &containers.ContainersController{}
 	lc := &logs.LogsController{}
 	nc := &networks.NetworksController{}
+	ic := &images.ImagesController{}
+	vc := &volumes.VolumesController{}
 
 	// middleware chaining
 	commonHandlers := alice.New(middleware.LoggingHandler, middleware.RecoverHandler)
@@ -38,6 +42,14 @@ func Router() *mux.Router {
 	// Network Information Routes
 	s.Handle("/networks", commonHandlers.ThenFunc(nc.Index)).Methods("GET")
 	s.Handle("/networks/{networkId}", commonHandlers.ThenFunc(nc.Show)).Methods("GET")
+
+	// Image Information Routes
+	s.Handle("/images", commonHandlers.ThenFunc(ic.Index)).Methods("GET")
+	s.Handle("/images/{imageId}", commonHandlers.ThenFunc(ic.Show)).Methods("GET")
+
+	// Volume Information Routes
+	s.Handle("/volumes", commonHandlers.ThenFunc(vc.Index)).Methods("GET")
+	s.Handle("/volumes/{volumeId}", commonHandlers.ThenFunc(vc.Show)).Methods("GET")
 
 	// Container Logs Route
 	// Because we send the logs over websockets we can't run normal middleware
